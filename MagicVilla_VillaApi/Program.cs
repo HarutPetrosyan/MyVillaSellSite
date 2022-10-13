@@ -23,6 +23,7 @@ builder.Services.AddDbContext<AplicationDBContext>(option =>
 {
     option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
 });
+builder.Services.AddResponseCaching();
 builder.Services.AddApiVersioning(option =>
 {
     option.AssumeDefaultVersionWhenUnspecified = true;
@@ -54,6 +55,10 @@ builder.Services.AddAuthentication(n =>
 });
 builder.Services.AddControllers(option =>
 {
+    option.CacheProfiles.Add("Default30",new CacheProfile()
+    {
+        Duration = 30
+    });
     //option.ReturnHttpNotAcceptable = true;
 }).AddNewtonsoftJson().AddXmlDataContractSerializerFormatters();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -137,7 +142,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(optiion =>
     {
         optiion.SwaggerEndpoint("/swagger/v1/swagger.json","Magic_VillaV1");
-        optiion.SwaggerEndpoint("/swagger/v2/swagger.json","Magic_VillaV2");
+        optiion.SwaggerEndpoint("/swagger/v2/swagger.json","Magic_VillaV2"); 
     });
 }
 

@@ -17,12 +17,21 @@ namespace MagicVilla_VillaApi.Repository
             //_dbCon.VillaNumbers.Include(n => n.Villa).ToList();
             _db = _dbCon.Set<T>();
         }
-        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, string? includeProperties = null)
+        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, string? includeProperties = null
+                , int pageSize = 0, int pageNumber = 1)
         {
             IQueryable<T> query = _db;
             if (filter != null)
             {
                 query = query.Where(filter);
+            }
+            if (pageSize > 0)
+            {
+                if (pageSize > 100)
+                {
+                    pageSize = 100;
+                }
+                query = query.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
             }
             if (includeProperties != null)
             {
@@ -48,6 +57,7 @@ namespace MagicVilla_VillaApi.Repository
                 query = query.Where(filter);
             }
 
+            
             if (includeProperties != null)
             {
                 foreach (var includProp in includeProperties.Split(new char[] {','},StringSplitOptions.RemoveEmptyEntries))
